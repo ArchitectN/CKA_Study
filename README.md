@@ -1,0 +1,1 @@
+Learning Kubernetes through taking the CKA.  This will give me guidance on how to proficiently navigate and troubleshoot Kubernetes 
