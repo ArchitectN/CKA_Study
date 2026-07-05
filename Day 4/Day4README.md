@@ -24,3 +24,6 @@ start: restarts an **existing (stopped)** container
 --help
 
 used for syntax help to complete a COMMAND
+
+docker remove
+used to remove a specific image or container
