@@ -1,0 +1,87 @@
+# =============================================================================
+# EXAMPLE MANIFEST — matches your diagram:
+#   Python Frontend (Deployment, 4 pods) --> Redis Service --> Redis Backend (Deployment, 3 pods)
+#
+# This is ONE file with THREE objects separated by "---".
+# You can split these into 3 separate files if you prefer — kubectl doesn't care,
+# `kubectl apply -f` works the same either way (or `kubectl apply -f ./folder/`
+# to apply every YAML file in a directory at once).
+# =============================================================================
+# I split up the files
+
+
+
+---
+# -----------------------------------------------------------------------------
+# OBJECT 3: Python Frontend Deployment
+# This creates the 4 frontend Pods shown at the top of your diagram.
+# -----------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-frontend
+  labels:
+    app: python-frontend
+spec:
+  replicas: 4                       # <-- matches "Pod 1, Pod 2, Pod 3, Pod 4" in your diagram
+  selector:
+    matchLabels:
+      app: python-frontend
+  template:
+    metadata:
+      labels:
+        app: python-frontend
+    spec:
+      containers:
+      - name: python-frontend
+        image: architectn/my-python-image:v1     # your own image from Docker Hub
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST                        # <-- your app code reads this env var
+          value: "redis-service"                   #     to know where to connect — NOT a pod IP,
+                                                     #     just the stable Service DNS name
+        - name: REDIS_PORT
+          value: "6379"
+
+
+# =============================================================================
+# HOW YOU'D ACTUALLY USE THIS FILE
+# =============================================================================
+#
+# Apply everything at once:
+#   kubectl apply -f example-manifest.yaml
+#
+# This creates all 3 objects in order (order doesn't actually matter to kubectl —
+# it applies all objects and lets controllers reconcile as they see fit, but the
+# order here matches the diagram top-to-bottom for readability).
+#
+# Check what got created:
+#   kubectl get deployments
+#   kubectl get pods
+#   kubectl get svc
+#
+# Watch pods come up in real time:
+#   kubectl get pods -w
+#
+# Delete everything defined in this file (clean teardown, same file, one command):
+#   kubectl delete -f example-manifest.yaml
+#
+# =============================================================================
+# KEY STRUCTURAL PATTERN TO NOTICE ACROSS ALL 3 OBJECTS
+# =============================================================================
+#
+# Every Kubernetes manifest has this same shape:
+#
+#   apiVersion: <which API group/version this object belongs to>
+#   kind: <what type of object this is — Deployment, Service, Pod, ConfigMap, etc.>
+#   metadata:
+#     name: <this object's name>
+#     labels: <tags for YOUR OWN organization/filtering — optional>
+#   spec:
+#     <the actual configuration — differs completely depending on "kind">
+#
+# The "labels" + "selector" pairing is the single most important pattern to
+# understand: it's how loosely-coupled objects (Services, Deployments, Pods)
+# find each other, instead of hardcoding names or IPs anywhere.
+# =============================================================================

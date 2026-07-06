@@ -1,0 +1,21 @@
+---
+# -----------------------------------------------------------------------------
+# OBJECT 2: Redis Service
+# This is the "svc" box in the middle of your diagram (redis-service).
+# NOT a pod. NOT a running process. Just a routing rule stored in etcd.
+# -----------------------------------------------------------------------------
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service               # <-- this is the DNS name other pods will use to reach Redis
+                                     #     e.g. "redis-service" or "redis-service.default.svc.cluster.local"
+spec:
+  selector:
+    app: redis                      # <-- MUST match the label on the Redis pods above
+                                     #     this is how the Service finds which Pods to route to
+  ports:
+  - port: 6379                      # port the Service itself listens on (what other pods connect to)
+    targetPort: 6379                # port on the actual Pod/container to forward traffic to
+  type: ClusterIP                   # internal-only IP, not reachable from outside the cluster
+                                     # (this is the right choice here — only the frontend needs to reach Redis)

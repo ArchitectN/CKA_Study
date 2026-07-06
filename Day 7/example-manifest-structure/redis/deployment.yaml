@@ -1,0 +1,29 @@
+# -----------------------------------------------------------------------------
+# OBJECT 1: Redis Backend Deployment
+# This creates the 3 Redis Pods shown at the bottom of your diagram.
+# -----------------------------------------------------------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-backend              # name of the Deployment object itself
+  labels:
+    app: redis                     # label on the Deployment resource (optional, for your own organization)
+spec:
+  replicas: 3                      # <-- matches "Pod 1, Pod 2, Pod 3" in your diagram
+  selector:
+    matchLabels:
+      app: redis                   # this MUST match the labels below in template.metadata.labels
+                                    # this is how the Deployment knows which Pods belong to it
+  template:                        # <-- everything under here is the actual Pod template
+    metadata:
+      labels:
+        app: redis                 # <-- this label is what the Service will search for (see Object 2)
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.2-alpine    # public image, no imagePullSecret needed
+        ports:
+        - containerPort: 6379      # Redis's default port
+
+

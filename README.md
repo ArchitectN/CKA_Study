@@ -51,11 +51,39 @@ If I want to update my application, Deployment can update the Pods section by se
 Declarative Configuration
 when I tell the deployment to run 10 Pods.  I dont have to manage that 10 Pods will run
 
-![Kubernetes Cluster diagram](stored-images/image.png)
+![Kubernetes Cluster diagram](stored-images/Kubernetes-cluster-diagram.png)
 
 ### How is the control plane setup?
 kubelet
 
 
+
+# Day 7 notes
+![alt text](stored-images/Data-Plane-Diagram.png)
+
+## What is a Pod
+A Pod is the smallest and most basic deployable unit in Kubernetes.
+Pod can have multiple containers which main share:
+- Network (Network Namespaces)
+- Storage
+
+Why multiple container?
+Sidecar pattern (Logging, monitoring, proxy, reverse proxy)
+
+## What is a Deployment?
+It ensures that the desired number of Pods are **running**.
+Key features:
+- Replica Management
+- ROlling Updates and ROllbacks
+- Declarative Configuration
+
+
+
+### kube-proxy main functions
+it is its' own seperate Pod
+
+1. Service-to-pod routing rules
+2. Load balancing
+3. Health Checks
 
 
