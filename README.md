@@ -79,7 +79,7 @@ Key features:
 
 
 
-### kube-proxy main functions
+## kube-proxy main functions
 it is its' own seperate Pod
 
 1. Service-to-pod routing rules
@@ -87,3 +87,131 @@ it is its' own seperate Pod
 3. Health Checks
 
 
+
+## kubelet
+1. Watches the API server for Pods assigned to its node
+Every kubelet only cares about work scheduled specifically to the node it's running on — it ignores everything else in the cluster.
+2. Tells containerd to pull the image and start the container
+This is the exact step where your architectn/my-python-image:v1 got pulled and started — the kubelet on whichever worker node the Scheduler picked told containerd "run this."
+3. Runs health checks (liveness/readiness probes)
+If you'd configured probes on your my-python-app, the kubelet is what actually executes them repeatedly and restarts the container if a liveness check fails.
+4. Reports status back to the API server
+This is how kubectl get pods shows Running/Ready — the kubelet on the node is continuously reporting "here's the real state of what I'm running" back up through the API server, which is what lets the Deployment controller compare desired vs. actual state and react if something's wrong (like your ImagePullBackOff situation).
+5. Manages the node itself
+Reports node-level health (CPU/memory pressure, disk space) — this is what feeds into things like Karpenter/EKS Auto Mode deciding "this node is full, provision another one," which is exactly what happened when your second c6a.large node got created.
+
+
+![alt text](stored-images/Full-Scope-Kubernetes.png)
+
+
+In a manifest file.  each kind is considered an object
+
+
+# Day 8 notes
+
+## Setting Kind (**K**ubernetes **in Do**cker) Cluster locally
+[Setup link for kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | [Setup link for KIND](https://kind.sigs.k8s.io/docs/user/quick-start/)
+
+from my previous side learnings I setup kubectl to direct to my AWS EKS.  I will now change it to direct it's push to KIND.  Using the command below to verify:
+```
+kubectl config current-context
+```
+![alt text](stored-images/kubectl-points-AWS.png)
+
+### Create KIND cluster
+After creating my kind-cluster.yaml file stored in Day 8, I ran the command to create the cluster but got an error.  It showed me there was an indentation error in line 4 so I fixed that by adding a break space for nodes and also the image line was not indented correctly
+```
+(base) nicho@phoenix:~/CKA_study/Day 8$ kind create cluster --name my-first-cluster --config kind-cluster.yaml
+ERROR: failed to create cluster: could not determine kind / apiVersion for config: yaml: line 4: did not find expected '-' indicator
+```
+
+Ran the command below to see my cluster listed
+```
+kind get clusters
+```
+
+**side note.  when you create a cluster it automically also enters all that information into 
+```
+~/.kube/config
+```
+it will automatically select the latest cluster
+**side note
+kube/config is unsecure
+### How does Kubectl connect to the cluster API Server?
+it used the client certificate data and the client key data that is stored in the kube config file.
+
+
+
+
+## What is KUbernetes Context
+How a user accesses a specific cluster (and optionally, a namespace)
+![alt text](stored-images/context-cluster.png)
+
+Verify list of context
+```
+kubectl config get-contexts
+```
+
+Change to kind context
+```
+kubectl config use-context kind-my-first-cluster
+```
+
+
+## What is Linux Foundation and CNCF
+[EXAM link](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/)
+| As of July 7, 2026, The exam is based on Kubernetes v1.35.
+
+
+## Understanding Kubernetes Origin
+- Developed by Google
+- Open sourced release in 2014
+- Kubernetes become a part of the CloudNative Computing Foundation (CNCF) in 2015.
+- Community-driven: Kubernetes is now developed and maintained by a large, active open-source community
+
+
+
+
+# Day 9 notes
+
+## Imperative vs. Delcaritve
+There are 2 Approachs (to System Configuration)
+
+### Imperative
+- Instructs the system on how to achieve the desired state, step-by-step
+- Simpler for quick, one-off tasks
+- E.g. ```kubectl run my-pod --image=nginx```
+
+### Declarative
+- Describes what the desired state should be, letting the system figure out how to achieve it.
+- Better for managing complex configurations
+- E.g. kubectl apply -f pod.yaml
+
+#### Why is Delcarative preferred?
+- Idempotency
+
+- Version Control
+
+- Simplicity
+
+
+
+
+## Intro to YAML
+- Human-readable **data serialization** language
+- Simple: Easy to read and write, making it user-friendly
+- Uses indentation and line breaks
+- Widely used in DevOps tools 
+- Extension: .yml or .yaml
+![alt text](stored-images/yaml-compare.png)
+
+Data Types:
+1. Scalar (strings, integers, floats, booleans, and null)
+2. Dictionaries (aka Maps)
+3. Lists (aka Arrays)
+
+[Practice-File](<Days/Day 9/practice.yaml>)
+## Kubernetes Pod Manifest Example
+
+
+## Pod documentation

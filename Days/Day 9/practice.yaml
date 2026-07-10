@@ -1,0 +1,40 @@
+
+#scalar types (keys and values)
+first_name: Nick #string
+roll_number: 9 #integer
+weight: 134.9 #float
+is_engineer: true #boolean
+payment_dues: null #null
+
+address: #dictionary
+  street: "123 Main St" #string
+  city: "Anytown" #string
+  state: "CA" #string
+  zip_code: 12345 #integer
+  contact: #Nested dictionary
+    phone: "555-1234" #string
+    email: "
+
+hobbies: #list
+  - reading #string
+  - hiking #string
+  - coding #string
+
+
+education: #Dictionary with nested list (education has degrees as the dictionary key and the value is a list of dictionaries)
+  degrees: #degrees has a list
+    - degree: "Bachelor's" #string
+      major: "Computer Science" #string
+      year: 2020 #integer
+    - degree: "Master's" #string
+      major: "Software Engineering" #string
+      year: 2022 #integer
+
+
+work_experience: #list of nested dictionaries
+  - company: "TechCorp" #string
+    position: "Software Engineer" #string
+    years: 3 #integer
+  - company: "WebSolutions" #string
+    position: "Frontend Developer" #string
+    years: 2 #integer

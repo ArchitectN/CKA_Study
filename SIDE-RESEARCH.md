@@ -310,3 +310,18 @@ This is just another object in etcd too — still no running process "being" the
 
 
 (this is helping me conceptualize K8s actual running processes vs. just declarative objects in etcd)
+
+
+# Q. when to have seperate manifests for deployment and services
+
+## When to keep them fully separate
+
+- Larger/more complex apps with many resources (ConfigMaps, Secrets, multiple Services, Ingress, HPA, etc.) — one file per resource keeps diffs/reviews clean, as I covered before
+- When resources have genuinely independent lifecycles (e.g., you update app code way more often than you update its Service definition)
+- Helm charts and Kustomize — the tooling itself expects one-resource-per-file as a baseline convention
+
+## When to actually reach for --- combined files
+
+- A Deployment + its own dedicated Service (like your Redis backend + redis-service) — they're logically inseparable; you'd never deploy one without the other, so keeping them in one redis.yaml file is genuinely reasonable and common
+- Small, tightly scoped example/demo work (like the manifest I gave you)
+- When you want kubectl apply -f redis.yaml to atomically create/update both together in one command, one file, no ambiguity about "did I apply both pieces"
