@@ -215,3 +215,150 @@ Data Types:
 
 
 ## Pod documentation
+
+
+# Day 10 notes
+
+```
+kubectl get api-resources
+```
+
+
+
+## Replication Controller
+Allows for self healing properties
+
+Selector is only exact match
+
+## ReplicaSets
+Same core job as Replication Controller but is a replacement for it.
+
+ReplicaSets have Selector expressiveness.
+### matchLabels
+used for when you need exact-match AND logic
+
+
+### matchExpressions Operator types
+Used for when you need OR  or presence checks
+
+#### In
+any value in the list
+#### NotIn
+everything except the list
+
+#### Exists
+
+```
+matchExpressions:
+  - key: tier
+    operator: In
+    values: [frontend, backend]
+```
+
+
+## Equality * Set-Based labels * Selectors
+These are how objects get organized and linked to each other,  since Kubernetes doesn't rely on names or hierachy for that
+```
+metadata:
+  labels:
+    app: frontend
+    env: production
+    tier: web
+```
+You can put arbitrary keys/values here.  A single object can have multiple labels, and the same label can be applied to many objects.
+
+
+Selectors are used to select a specific label
+
+The most common use is a Service or Deployment finding the pods it shoudl manage
+
+
+## Deployments
+A Deployment's pod template has labels, and its ```spec.selector``` must match those labels so it knows which pods it owns
+
+A Service does the same thing to decide which pods to route traffic to
+
+
+Acts as a manager for ReplicaSets
+
+
+
+### Real use case
+You would always use Deployment kind and never ReplicaSets/ReplicaControllers
+
+![alt text](stored-images/Deployment-yaml.png)
+
+
+
+# Day 11 Notes
+## Microservices & 3-Tier Architecture | Software design patterns
+
+### Single codebase
+no 3-tier design, application was deployed as a single codebased
+  Monolithic design
+  Means the application is self-contained, tightly integrated software system where all components -- UI, business logic, and database -- are part of a single codebase and deployed as a single unit
+
+
+Lack of flexibility in development
+limited scalability
+difficult maintenance and upgrades
+
+### 3-tier
+
+#### Web Tier (frontend)
+User interface that interacts with the application
+
+#### Application Tier (Backend)
+Handles business logic, processing and communication with databases
+
+#### Data Tier (Database)
+stores, manages, and retrieves data
+
+
+### Database architecture
+Kubernetes would not be used to deploy databases in real use cases
+  most of the time*
+Kubernetes was designed for staeless, ephemeral workloads rather than stateful applications.
+  Kubernetes inherently treats containers as disposable.
+
+It is possible to use Kubernetes but you would need some sort of persistent volume such as AWS ELB
+
+You need to take great care that the container does not terminate early and leave the file open and incomplete
+
+You also need to ensure that the file that the database operates on is in a very secure file systme that is not bould to the life cycle of the container.  
+You need ot make sure that only one process accesses this file at a time and that the file integrity is good and whoel at all times.
+
+
+
+# Day 13 Notes
+
+
+save time creating YAML
+-o yaml
+
+
+
+# Day 15 Notes
+
+Scheduler
+- Resource availability (CPU, memory).
+- Taints and tolerations (node restrictions).
+- Affinity and anti-affinity rules
+
+
+## Manual Scheduling
+means explicitly assigning a pod to a node using the nodeName field in the pod's YAML manifest.  This completely bypasses the Kubernetes scheduler
+
+### Why use manual scheduling
+- Troubleshooting & Debugging
+- Testing Node-Specific WOrkloads
+- Kubernetes Scheduler is Unavailable
+
+```
+spec:
+  nodeName: manual-node #where you force the pod to run in which node
+  containers:
+  - name: nginx
+```
+
+if you have nodeName set to a node that isn't in the cluster, the Pod will be stuck on pending

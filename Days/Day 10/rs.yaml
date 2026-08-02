@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: nginx-rs
+spec:  # what the ReplicaSet should look like
+  replicas: 3
+  selector:
+    matchLabels:
+      app:nginx # <-- what selector looks for
+    template: # the pod blueprint
+      metadata:
+        labels:
+          app: nginx  # <-- must match, this is what gets checked
+      spec: # this is a Pod spec, same shape as a standalone Pod
+        containers:
+        - name: nginx
+          image: nginx:1.7.9
+          ports:
+          - containerPort: 80

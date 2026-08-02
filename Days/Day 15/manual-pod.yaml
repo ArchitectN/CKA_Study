@@ -1,0 +1,13 @@
+# used kubernetes plugin to quickly create a pod
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-manual
+spec:
+  nodeName: manual-node #where you force the pod to run in which node
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      - containerPort: 80

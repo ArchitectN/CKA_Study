@@ -325,3 +325,80 @@ This is just another object in etcd too — still no running process "being" the
 - A Deployment + its own dedicated Service (like your Redis backend + redis-service) — they're logically inseparable; you'd never deploy one without the other, so keeping them in one redis.yaml file is genuinely reasonable and common
 - Small, tightly scoped example/demo work (like the manifest I gave you)
 - When you want kubectl apply -f redis.yaml to atomically create/update both together in one command, one file, no ambiguity about "did I apply both pieces"
+
+
+
+# Q. why are database not used in K8s
+
+
+
+## 4year old reddit link discussion
+[REDDIT link to unadvisable DB on K8s](https://www.reddit.com/r/kubernetes/comments/tfga4y/eli5_why_is_it_not_advisable_to_run_databases_in/)
+
+I’m gonna get PTSD…
+
+The biggest problems I’ve found are:
+
+    getting it approved by infosec was a nightmare because they don’t know K8s
+
+    Minor cluster upgrades always incurred downtime due to API dependencies from the operator
+
+    ensuring the damn thing was in-sync across clusters, read replicas always went out of sync.
+
+    implementing wal archiving(huge PITA)
+
+    PVC data segregation(regulated industry)
+
+    operators were wonky when interacting with replicas from another chart
+
+    you need to manage a service mesh to access the replica safely(go with Anthos if you can)
+
+    performance is as fast as your storage system
+
+After all these BS, I’d recommend cockroach DB if it’s a greenfield project due to its quirks
+
+
+
+# Q. Service nodeport vs clusterIP
+
+- ClusterIP answers "how do Pods inside my cluster talk to each other?" 
+
+- NodePort answers "how does something outside my cluster reach in?" 
+
+That's why your frontend-svc (needs to be reachable by an actual browser) is NodePort, and your backend-svc (only ever talked to by the frontend Pods, never directly by a user) is ClusterIP
+
+
+# Q: if I label the frontend-svc port 31000 how am I suppose to link example.com to it?
+
+you can't
+
+- You will use a LoadBalancer Service or an Ingress Controller
+
+- NodePort is used to poke at your service for local development and testing
+
+
+# Q: how to speed up my workflow in kubectl commands
+Add an alias to your shell config file in WSL2.  
+
+## For Bash
+
+bash file
+```
+vim ~/.bashrc
+```
+
+enter alias (I added it at the very bottom but you can enter this anywhere)
+```
+alias k=kubectl
+alias kg="kubectl get"
+alias kd="kubectl describe"
+alias kl="kubectl logs"
+alias kaf="kubectl apply -f"
+alias kdel="kubectl delete"
+```
+
+reload bash
+```
+source ~/.bashrc
+```
+
