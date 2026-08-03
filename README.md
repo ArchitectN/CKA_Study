@@ -38,18 +38,18 @@ Sidecar pattern (Logging, monitoring, proxy, reverse proxy)
 
 
 ### Deployment
-It ensures that the desired nuber of Pods are running.
+It ensures that the desired number of Pods are running.
 Key features:
 - Replica Management
 - Rolling Updates and Rollbacks
 - Declarative Configuration
 
-Even if you have a single Pod in the Deployment.  The Deployment will try to restart the Pod incase it fails
+Even if you have a single Pod in the Deployment.  The Deployment will try to restart the Pod in case it fails
 
 If I want to update my application, Deployment can update the Pods section by section (rolling update) ensuring no downtime
 
 Declarative Configuration
-when I tell the deployment to run 10 Pods.  I dont have to manage that 10 Pods will run
+when I tell the deployment to run 10 Pods.  I don't have to manage that 10 Pods will run
 
 ![Kubernetes Cluster diagram](stored-images/Kubernetes-cluster-diagram.png)
 
@@ -174,8 +174,8 @@ kubectl config use-context kind-my-first-cluster
 
 # Day 9 notes
 
-## Imperative vs. Delcaritve
-There are 2 Approachs (to System Configuration)
+## Imperative vs. Declaritve
+There are 2 Approaches (to System Configuration)
 
 ### Imperative
 - Instructs the system on how to achieve the desired state, step-by-step
@@ -187,7 +187,7 @@ There are 2 Approachs (to System Configuration)
 - Better for managing complex configurations
 - E.g. kubectl apply -f pod.yaml
 
-#### Why is Delcarative preferred?
+#### Why is Declarative preferred?
 - Idempotency
 
 - Version Control
@@ -257,7 +257,7 @@ matchExpressions:
 
 
 ## Equality * Set-Based labels * Selectors
-These are how objects get organized and linked to each other,  since Kubernetes doesn't rely on names or hierachy for that
+These are how objects get organized and linked to each other,  since Kubernetes doesn't rely on names or hierarchy for that
 ```
 metadata:
   labels:
@@ -270,7 +270,7 @@ You can put arbitrary keys/values here.  A single object can have multiple label
 
 Selectors are used to select a specific label
 
-The most common use is a Service or Deployment finding the pods it shoudl manage
+The most common use is a Service or Deployment finding the pods it should manage
 
 
 ## Deployments
@@ -318,15 +318,15 @@ stores, manages, and retrieves data
 ### Database architecture
 Kubernetes would not be used to deploy databases in real use cases
   most of the time*
-Kubernetes was designed for staeless, ephemeral workloads rather than stateful applications.
+Kubernetes was designed for stateless, ephemeral workloads rather than stateful applications.
   Kubernetes inherently treats containers as disposable.
 
 It is possible to use Kubernetes but you would need some sort of persistent volume such as AWS ELB
 
 You need to take great care that the container does not terminate early and leave the file open and incomplete
 
-You also need to ensure that the file that the database operates on is in a very secure file systme that is not bould to the life cycle of the container.  
-You need ot make sure that only one process accesses this file at a time and that the file integrity is good and whoel at all times.
+You also need to ensure that the file that the database operates on is in a very secure file system that is not bound to the life cycle of the container.  
+You need ot make sure that only one process accesses this file at a time and that the file integrity is good and whole at all times.
 
 
 
@@ -362,3 +362,7 @@ spec:
 ```
 
 if you have nodeName set to a node that isn't in the cluster, the Pod will be stuck on pending
+
+
+## Static pods
+Static Pods are created and managed by the kubelet on a node, not by the Kubernetes API server
